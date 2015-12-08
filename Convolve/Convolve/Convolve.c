@@ -54,7 +54,12 @@ int main(int argc, char *argv[]){
 	getchar();		//keeps terminal open (visual studio) 
 }
 
+//reads .WAV file
+float* readWAVFile(char* input){
 
+	int size
+	
+}
 
 
 
