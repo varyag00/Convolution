@@ -35,53 +35,32 @@ Sources:	Main WAV file: http://soundbible.com/989-10-Second-Applause.html
 #pragma endregion
 
 
-
-
 #include <stdio.h>
 #include <stdlib.h>
 
-char chunkID[5];
-int chunkSize;
-char format[5];
 
-char subChunk1ID[5];
-int subChunk1Size;
-short audioFormat;
-short numChannels;
-int sampleRate;
-int byteRate;
-short blockAlign;
-short bitsPerSample;
+#pragma region Input WAV Loading 
 
-int channelSize;
-char subChunk2ID[5];
-int subChunk2Size;
+char WAVchunkID[5];
+int WAVchunkSize;
+char WAVformat[5];
 
-short* data;
+char WAVsubChunk1ID[5];
+int WAVsubChunk1Size;
+short WAVaudioFormat;
+short WAVnumChannels;
+int WAVsampleRate;
+int WAVbyteRate;
+short WAVblockAlign;
+short WAVbitsPerSample;
 
-void print()
-{
-	chunkID[5] = '\0';
-	format[5] = '\0';
-	subChunk1ID[5] = '\0';
-	subChunk2ID[5] = '\0';
+int WAVchannelSize;
+char WAVsubChunk2ID[5];
+int WAVsubChunk2Size;
 
-	printf("\n============= HEADER INFO =============\n");
-	printf(" chunkID:%s\n", chunkID);
-	printf(" chunkSize:%d\n", chunkSize);
-	printf(" format:%s\n", format);
-	printf(" subChunk1ID:%s\n", subChunk1ID);
-	printf(" subChunk1Size:%d\n", subChunk1Size);
-	printf(" audioFormat:%d\n", audioFormat);
-	printf(" numChannels:%d\n", numChannels);
-	printf(" sampleRate:%d\n", sampleRate);
-	printf(" byteRate:%d\n", byteRate);
-	printf(" blockAlign:%d\n", blockAlign);
-	printf(" bitsPerSample:%d\n", bitsPerSample);
-	printf(" subChunk2ID:%s\n", subChunk2ID);
-	printf(" subChunk2Size:%d\n", subChunk2Size);
-}
+short* WAVdata;
 
+//loads data for WAV file
 int loadWave(char* filename)
 {
 	FILE* in = fopen(filename, "rb");
@@ -90,35 +69,35 @@ int loadWave(char* filename)
 	{
 		printf("Reading %s...\n", filename);
 
-		fread(chunkID, 1, 4, in);
-		fread(&chunkSize, 1, 4, in);
-		fread(format, 1, 4, in);
+		fread(WAVchunkID, 1, 4, in);
+		fread(&WAVchunkSize, 1, 4, in);
+		fread(WAVformat, 1, 4, in);
 
 		//sub chunk 1
-		fread(subChunk1ID, 1, 4, in);
-		fread(&subChunk1Size, 1, 4, in);
-		fread(&audioFormat, 1, 2, in);
-		fread(&numChannels, 1, 2, in);
-		fread(&sampleRate, 1, 4, in);
-		fread(&byteRate, 1, 4, in);
-		fread(&blockAlign, 1, 2, in);
-		fread(&bitsPerSample, 1, 2, in);
+		fread(WAVsubChunk1ID, 1, 4, in);
+		fread(&WAVsubChunk1Size, 1, 4, in);
+		fread(&WAVaudioFormat, 1, 2, in);
+		fread(&WAVnumChannels, 1, 2, in);
+		fread(&WAVsampleRate, 1, 4, in);
+		fread(&WAVbyteRate, 1, 4, in);
+		fread(&WAVblockAlign, 1, 2, in);
+		fread(&WAVbitsPerSample, 1, 2, in);
 
-		//read extra bytes
-		if (subChunk1Size == 18)
+		//read extra bytes 
+		if (WAVsubChunk1Size == 18)
 		{
 			short empty;
 			fread(&empty, 1, 2, in);
 		}
 
 		//sub chunk 2
-		fread(subChunk2ID, 1, 4, in);
-		fread(&subChunk2Size, 1, 4, in);
+		fread(WAVsubChunk2ID, 1, 4, in);
+		fread(&WAVsubChunk2Size, 1, 4, in);
 
 		//read data		
-		int bytesPerSample = bitsPerSample / 8;
-		int numSamples = subChunk2Size / bytesPerSample;
-		data = (short*)malloc(sizeof(short) * numSamples);
+		int bytesPerSample = WAVbitsPerSample / 8;
+		int numSamples = WAVsubChunk2Size / bytesPerSample;
+		WAVdata = (short*)malloc(sizeof(short) * numSamples);
 
 		//fread(data, 1, bytesPerSample*numSamples, in);
 
@@ -126,7 +105,7 @@ int loadWave(char* filename)
 		short sample = 0;
 		while (fread(&sample, 1, bytesPerSample, in) == bytesPerSample)
 		{
-			data[i++] = sample;
+			WAVdata[i++] = sample;
 			sample = 0;
 		}
 
@@ -141,87 +120,79 @@ int loadWave(char* filename)
 	return 1;
 }
 
-//TODO: complete or delete
+#pragma endregion 
+
+#pragma region IR Loading 
+
+char IRchunkID[5];
+int IRchunkSize;
+char IRformat[5];
+
+char IRsubChunk1ID[5];
+int IRsubChunk1Size;
+short IRaudioFormat;
+short IRnumChannels;
+int IRsampleRate;
+int IRbyteRate;
+short IRblockAlign;
+short IRbitsPerSample;
+
+int IRchannelSize;
+char IRsubChunk2ID[5];
+int IRsubChunk2Size;
+
+short* IRdata;
+
+//loads data for IR file
 int loadIR(char* filename){
 
-	return 1;
-}
+	FILE* in = fopen(filename, "rb");
 
-int saveWave(char* filename)
-{
-	FILE* out = fopen(filename, "wb");
-
-	if (out != NULL)
+	if (in != NULL)
 	{
-		printf("\nWriting %s...\n", filename);
+		printf("Reading %s...\n", filename);
 
-		fwrite(chunkID, 1, 4, out);
-		fwrite(&chunkSize, 1, 4, out);
-		fwrite(format, 1, 4, out);
+		fread(IRchunkID, 1, 4, in);
+		fread(&IRchunkSize, 1, 4, in);
+		fread(IRformat, 1, 4, in);
 
 		//sub chunk 1
-		fwrite(subChunk1ID, 1, 4, out);
-		fwrite(&subChunk1Size, 1, 4, out);
-		fwrite(&audioFormat, 1, 2, out);
-		fwrite(&numChannels, 1, 2, out);
-		fwrite(&sampleRate, 1, 4, out);
-		fwrite(&byteRate, 1, 4, out);
-		fwrite(&blockAlign, 1, 2, out);
-		fwrite(&bitsPerSample, 1, 2, out);
+		fread(IRsubChunk1ID, 1, 4, in);
+		fread(&IRsubChunk1Size, 1, 4, in);
+		fread(&IRaudioFormat, 1, 2, in);
+		fread(&IRnumChannels, 1, 2, in);
+		fread(&IRsampleRate, 1, 4, in);
+		fread(&IRbyteRate, 1, 4, in);
+		fread(&IRblockAlign, 1, 2, in);
+		fread(&IRbitsPerSample, 1, 2, in);
 
-		//read extra bytes
-		if (subChunk1Size == 18)
+		//read extra bytes 
+		if (IRsubChunk1Size == 18)
 		{
-			short empty = 0;
-			fwrite(&empty, 1, 2, out);
+			short empty;
+			fread(&empty, 1, 2, in);
 		}
 
 		//sub chunk 2
-		fwrite(subChunk2ID, 1, 4, out);
-		fwrite(&subChunk2Size, 1, 4, out);
+		fread(IRsubChunk2ID, 1, 4, in);
+		fread(&IRsubChunk2Size, 1, 4, in);
 
 		//read data		
-		int bytesPerSample = bitsPerSample / 8;
-		int sampleCount = subChunk2Size / bytesPerSample;
+		int bytesPerSample = IRbitsPerSample / 8;
+		int numSamples = IRsubChunk2Size / bytesPerSample;
+		IRdata = (short*)malloc(sizeof(short) * numSamples);
 
-		//impulse response - echo
-		float IR[IRSIZE];
-		IR[0] = 1.0;
-		IR[1] = 1.0;
-		IR[2] = 1.0;
-		IR[3] = 1.0;
-		IR[4] = 1.0;
-		IR[5] = 1.0;
+		//fread(data, 1, bytesPerSample*numSamples, in);
 
-		//write the data
-		float* newData = (float*)malloc(sizeof(float) * (sampleCount + IRSIZE - 1));
-		float maxSample = -1;
-		float MAX_VAL = 32767.f;	//FIXME: find based on bits per sample
-
-		for (int i = 0; i<sampleCount; ++i)
+		int i = 0;
+		short sample = 0;
+		while (fread(&sample, 1, bytesPerSample, in) == bytesPerSample)
 		{
-			//convolve
-			for (int j = 0; j<IRSIZE; ++j)
-				newData[i + j] += ((float)data[i] / MAX_VAL) * IR[j];
-
-			//Keep track of max value for scaling
-			if (i == 0)
-				maxSample = newData[0];
-			else if (newData[i] > maxSample)
-				maxSample = newData[i];
+			IRdata[i++] = sample;
+			sample = 0;
 		}
 
-		//scale and re write the data
-		for (int i = 0; i < sampleCount + IRSIZE - 1; ++i)
-		{
-			newData[i] = (newData[i] / maxSample);
-			short sample = (short)(newData[i] * MAX_VAL);
-			fwrite(&sample, 1, bytesPerSample, out);
-		}
-
-		//clean up
-		free(newData);
-		fclose(out);
+		fclose(in);
 		printf("Closing %s...\n", filename);
 	}
 	else
@@ -232,14 +203,140 @@ int saveWave(char* filename)
 	return 1;
 }
 
-int size;
+#pragma endregion 
 
-//performs time-based convolution as outlined in (Smith p. 112 - 115)
-void timeBased(char* input, char* IR, char* output){
 
+int saveWave(char* filename)
+{
+	//FILE* out = fopen(filename, "wb");
+
+	//if (out != NULL)
+	//{
+	//	printf("\nWriting %s...\n", filename);
+
+	//	fwrite(chunkID, 1, 4, out);
+	//	fwrite(&chunkSize, 1, 4, out);
+	//	fwrite(format, 1, 4, out);
+
+	//	//sub chunk 1
+	//	fwrite(subChunk1ID, 1, 4, out);
+	//	fwrite(&subChunk1Size, 1, 4, out);
+	//	fwrite(&audioFormat, 1, 2, out);
+	//	fwrite(&numChannels, 1, 2, out);
+	//	fwrite(&sampleRate, 1, 4, out);
+	//	fwrite(&byteRate, 1, 4, out);
+	//	fwrite(&blockAlign, 1, 2, out);
+	//	fwrite(&bitsPerSample, 1, 2, out);
+
+	//	//read extra bytes
+	//	if (subChunk1Size == 18)
+	//	{
+	//		short empty = 0;
+	//		fwrite(&empty, 1, 2, out);
+	//	}
+
+	//	//sub chunk 2
+	//	fwrite(subChunk2ID, 1, 4, out);
+	//	fwrite(&subChunk2Size, 1, 4, out);
+
+	//	//read data		
+	//	int bytesPerSample = bitsPerSample / 8;
+	//	int sampleCount = subChunk2Size / bytesPerSample;
+
+	//	//impulse response - echo
+	//	float IR[IRSIZE];
+	//	IR[0] = 1.0;
+	//	IR[1] = 1.0;
+	//	IR[2] = 1.0;
+	//	IR[3] = 1.0;
+	//	IR[4] = 1.0;
+	//	IR[5] = 1.0;
+
+	//	//write the data
+	//	float* newData = (float*)malloc(sizeof(float) * (sampleCount + IRSIZE - 1));
+	//	float maxSample = -1;
+	//	float MAX_VAL = 32767.f;	//FIXME: find based on bits per sample
+
+	//	for (int i = 0; i<sampleCount; ++i)
+	//	{
+	//		//convolve
+	//		for (int j = 0; j<IRSIZE; ++j)
+	//			newData[i + j] += ((float)data[i] / MAX_VAL) * IR[j];
+
+	//		//Keep track of max value for scaling
+	//		if (i == 0)
+	//			maxSample = newData[0];
+	//		else if (newData[i] > maxSample)
+	//			maxSample = newData[i];
+	//	}
+
+	//	//scale and re write the data
+	//	for (int i = 0; i < sampleCount + IRSIZE - 1; ++i)
+	//	{
+	//		newData[i] = (newData[i] / maxSample);
+	//		short sample = (short)(newData[i] * MAX_VAL);
+	//		fwrite(&sample, 1, bytesPerSample, out);
+	//	}
+
+	//	//clean up
+	//	free(newData);
+	//	fclose(out);
+	//	printf("Closing %s...\n", filename);
+	//}
+	//else
+	//{
+	//	printf("Can't open file: %s\n", filename);
+	//	return 0;
+	//}
+	//return 1;
 }
 
+void print()
+{
+	WAVchunkID[5] = '\0';
+	WAVformat[5] = '\0';
+	WAVsubChunk1ID[5] = '\0';
+	WAVsubChunk2ID[5] = '\0';
 
+	printf("\n============= HEADER INFO =============\n");
+	printf(" chunkID:%s\n", WAVchunkID);
+	printf(" chunkSize:%d\n", WAVchunkSize);
+	printf(" format:%s\n", WAVformat);
+	printf(" subChunk1ID:%s\n", WAVsubChunk1ID);
+	printf(" subChunk1Size:%d\n", WAVsubChunk1Size);
+	printf(" audioFormat:%d\n", WAVaudioFormat);
+	printf(" numChannels:%d\n", WAVnumChannels);
+	printf(" sampleRate:%d\n", WAVsampleRate);
+	printf(" byteRate:%d\n", WAVbyteRate);
+	printf(" blockAlign:%d\n", WAVblockAlign);
+	printf(" bitsPerSample:%d\n", WAVbitsPerSample);
+	printf(" subChunk2ID:%s\n", WAVsubChunk2ID);
+	printf(" subChunk2Size:%d\n", WAVsubChunk2Size);
+}
+
+//performs time-based convolution using the "Input Side Algorithm" from Smith p. 112-115
+void convolve(float x[], int N, float h[], int M, float y[], int P){
+
+	printf("\nPerforming time-based convolution\n");
+
+	if (P != (N + M - 1)){
+		printf("Output signal vector is of wrong size");
+		printf("Aborting convolution!");
+		return;
+	}
+
+	//set output array to all 0's
+	for (int n = 0; n < P; n++){
+		y[n] = 0;
+	}
+
+	//do the thing
+	for (int n = 0; n < N; n++){
+		for (int m = 0; m < M; m++){
+			y[n + m] += x[n] * h[m];
+		}
+	}
+}
 
 int main(int argc, char* argv[])
 {
@@ -259,9 +356,28 @@ int main(int argc, char* argv[])
 	else
 	{
 		printf("Invalid Usage: convolve <input.wav> <IR.wav> <output.wav>\n");
+		return -1;
+	}
+
+	//input file
+	int WAVError = loadWave(filename);
+
+	//IR
+	int IRError = loadIR(IRName);
+
+	if (!WAVError || !IRError){
+
+		printf("Error occurred while loading one of the .WAV files\n");
 		getchar();		//keeps terminal open (visual studio) 
 		return -1;
 	}
+
+	//creating output
+	int outputSize = WAVsubChunk2Size + IRsubChunk2Size - 1;
+	float* outputSignal;
+
+	convolve(WAVdata, WAVsubChunk2Size, IRdata, IRsubChunk2Size, outputSignal, outputSize);
+
 
 	getchar();		//keeps terminal open (visual studio) 
 
