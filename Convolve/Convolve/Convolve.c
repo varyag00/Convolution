@@ -53,7 +53,7 @@ int WAVsubChunk1Size;
 short WAVaudioFormat;
 short WAVnumChannels;
 int WAVsampleRate;
-int WAVbyteRate;
+int WAVbyteRate; 
 short WAVblockAlign;
 short WAVbitsPerSample;
 
