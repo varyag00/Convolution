@@ -1,10 +1,10 @@
-﻿Build started 2015-12-07 6:34:08 PM.
+﻿Build started 2015-12-07 7:42:33 PM.
      1>Project "H:\Developer\cpsc501_a4\Convolve\Convolve\Convolve.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          H:\Program Files\Visual Studio 2013\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt Convolve.c
          Convolve.c
-     1>h:\developer\cpsc501_a4\convolve\convolve\convolve.c(61): warning C4101: 'size' : unreferenced local variable
-     1>h:\developer\cpsc501_a4\convolve\convolve\convolve.c(63): warning C4716: 'readWAVFile' : must return a value
+     1>h:\developer\cpsc501_a4\convolve\convolve\convolve.c(94): warning C4172: returning address of local variable or temporary
+     1>h:\developer\cpsc501_a4\convolve\convolve\convolve.c(85): warning C4101: 'chunkID' : unreferenced local variable
        Link:
          H:\Program Files\Visual Studio 2013\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"H:\Developer\cpsc501_a4\Convolve\Debug\Convolve.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"H:\Developer\cpsc501_a4\Convolve\Debug\Convolve.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"H:\Developer\cpsc501_a4\Convolve\Debug\Convolve.lib" /MACHINE:X86 Debug\Convolve.obj
          Convolve.vcxproj -> H:\Developer\cpsc501_a4\Convolve\Debug\Convolve.exe
@@ -12,4 +12,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.68
+Time Elapsed 00:00:00.22
