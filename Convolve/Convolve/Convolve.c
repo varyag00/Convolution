@@ -6,7 +6,8 @@ Ass:		4
 
 Notes:		Program implements convolution reverb to a dry sound with an inpulse response, and outputs the sound as if it were playing in a concert hall.
 
-Sources:	
+Sources:	Main WAV file: http://soundbible.com/989-10-Second-Applause.html
+			Impulse Response: http://www.echochamber.ch/index.php/tipps-freebies/impulseresponses.html
 */
 
 
@@ -48,18 +49,17 @@ int main(int argc, char *argv[]){
 
 	
 
-	//perform convolution
+	//perform time-based convolution 
 	
 
 	getchar();		//keeps terminal open (visual studio) 
 }
 
-//reads .WAV file
+//reads .WAV file input
 float* readWAVFile(char* input){
 
-	int size
+	int size;
 	
 }
 
-
-
+//performs time-based convolution on two float arrays
