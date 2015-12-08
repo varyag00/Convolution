@@ -7,12 +7,12 @@ Ass:		4
 Notes:		Program implements convolution reverb to a dry sound with an inpulse response, and outputs the sound as if it were playing in a concert hall.
 
 Sources:	Main WAV file: http://soundbible.com/989-10-Second-Applause.html
-Impulse Response: http://www.echochamber.ch/index.php/tipps-freebies/impulseresponses.html
-Reading .WAV file (formatting): https://stackoverflow.com/questions/16075233/reading-and-processing-wav-file-data-in-c-c
-https://stackoverflow.com/questions/22059189/read-a-file-as-byte-array
+			Impulse Response: http://www.echochamber.ch/index.php/tipps-freebies/impulseresponses.html
+			Reading .WAV file (formatting): https://stackoverflow.com/questions/16075233/reading-and-processing-wav-file-data-in-c-c
+											https://stackoverflow.com/questions/22059189/read-a-file-as-byte-array
 
-Code used from:	http://pages.cpsc.ucalgary.ca/~laringha/501/Wavefiles/readwrite/main.c
-http://pages.cpsc.ucalgary.ca/~laringha/501/Wavefiles/main.c
+			Code used from:	http://pages.cpsc.ucalgary.ca/~laringha/501/Wavefiles/readwrite/main.c
+							http://pages.cpsc.ucalgary.ca/~laringha/501/Wavefiles/main.c
 */
 
 #pragma region Macros
@@ -32,7 +32,7 @@ http://pages.cpsc.ucalgary.ca/~laringha/501/Wavefiles/main.c
 #define DATA 0x61746164
 #define JUNK 0x4b4e554a
 
-#define PI 3.14159265358979
+#define M_PI 3.14159265358979323846
 #define TWO_PI (PI * 2)
 
 #pragma endregion
@@ -213,6 +213,7 @@ int loadIR(char* filename){
 short* OUTdata;
 int OUTSize;
 
+//saves convolution output to the output file
 int saveWave(char* filename)
 {
 	FILE* out = fopen(filename, "wb");
@@ -272,28 +273,6 @@ int saveWave(char* filename)
 
 #pragma endregion
 
-void print()
-{
-	WAVchunkID[5] = '\0';
-	WAVformat[5] = '\0';
-	WAVsubChunk1ID[5] = '\0';
-	WAVsubChunk2ID[5] = '\0';
-
-	printf("\n============= HEADER INFO =============\n");
-	printf(" chunkID:%s\n", WAVchunkID);
-	printf(" chunkSize:%d\n", WAVchunkSize);
-	printf(" format:%s\n", WAVformat);
-	printf(" subChunk1ID:%s\n", WAVsubChunk1ID);
-	printf(" subChunk1Size:%d\n", WAVsubChunk1Size);
-	printf(" audioFormat:%d\n", WAVaudioFormat);
-	printf(" numChannels:%d\n", WAVnumChannels);
-	printf(" sampleRate:%d\n", WAVsampleRate);
-	printf(" byteRate:%d\n", WAVbyteRate);
-	printf(" blockAlign:%d\n", WAVblockAlign);
-	printf(" bitsPerSample:%d\n", WAVbitsPerSample);
-	printf(" subChunk2ID:%s\n", WAVsubChunk2ID);
-	printf(" subChunk2Size:%d\n", WAVsubChunk2Size);
-}
 
 //performs time-based convolution using the "Input Side Algorithm" from Smith p. 112-115
 void convolve(short x[], int N, short h[], int M, short y[], int P){

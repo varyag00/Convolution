@@ -32,15 +32,15 @@ Sources:	Main WAV file: http://soundbible.com/989-10-Second-Applause.html
 #define DATA 0x61746164
 #define JUNK 0x4b4e554a
 
-#define PI 3.14159265358979
-#define TWO_PI (PI * 2)
-
 #pragma endregion
 
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
+
+int sixteenBits = 32767;
 
 #pragma region Input WAV Loading 
 
@@ -254,7 +254,7 @@ int saveWave(char* filename)
 		short val;
 		for (int i = 0; i < sampleCount; i++)
 		{
-			val = (short)(OUTdata[i] * (pow(2, 15) - 1) );
+			val = (short)(OUTdata[i] * sixteenBits);
 			fwrite((char*)&val, 1, 2, out);
 		}
 
@@ -272,28 +272,6 @@ int saveWave(char* filename)
 
 #pragma endregion
 
-void print()
-{
-	WAVchunkID[5] = '\0';
-	WAVformat[5] = '\0';
-	WAVsubChunk1ID[5] = '\0';
-	WAVsubChunk2ID[5] = '\0';
-
-	printf("\n============= HEADER INFO =============\n");
-	printf(" chunkID:%s\n", WAVchunkID);
-	printf(" chunkSize:%d\n", WAVchunkSize);
-	printf(" format:%s\n", WAVformat);
-	printf(" subChunk1ID:%s\n", WAVsubChunk1ID);
-	printf(" subChunk1Size:%d\n", WAVsubChunk1Size);
-	printf(" audioFormat:%d\n", WAVaudioFormat);
-	printf(" numChannels:%d\n", WAVnumChannels);
-	printf(" sampleRate:%d\n", WAVsampleRate);
-	printf(" byteRate:%d\n", WAVbyteRate);
-	printf(" blockAlign:%d\n", WAVblockAlign);
-	printf(" bitsPerSample:%d\n", WAVbitsPerSample);
-	printf(" subChunk2ID:%s\n", WAVsubChunk2ID);
-	printf(" subChunk2Size:%d\n", WAVsubChunk2Size);
-}
 
 //performs time-based convolution using the "Input Side Algorithm" from Smith p. 112-115
 void convolve(short x[], int N, short h[], int M, short y[], int P){
@@ -354,7 +332,7 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
-	//creating output
+	//creating output size
 	OUTSize = WAVsubChunk2Size + IRsubChunk2Size - 1;
 	
 	//convolve
