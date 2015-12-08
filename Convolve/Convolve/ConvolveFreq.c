@@ -7,12 +7,12 @@ Ass:		4
 Notes:		Program implements convolution reverb to a dry sound with an inpulse response, and outputs the sound as if it were playing in a concert hall.
 
 Sources:	Main WAV file: http://soundbible.com/989-10-Second-Applause.html
-			Impulse Response: http://www.echochamber.ch/index.php/tipps-freebies/impulseresponses.html
-			Reading .WAV file (formatting): https://stackoverflow.com/questions/16075233/reading-and-processing-wav-file-data-in-c-c
-											https://stackoverflow.com/questions/22059189/read-a-file-as-byte-array
+Impulse Response: http://www.echochamber.ch/index.php/tipps-freebies/impulseresponses.html
+Reading .WAV file (formatting): https://stackoverflow.com/questions/16075233/reading-and-processing-wav-file-data-in-c-c
+https://stackoverflow.com/questions/22059189/read-a-file-as-byte-array
 
-			Code used from:	http://pages.cpsc.ucalgary.ca/~laringha/501/Wavefiles/readwrite/main.c
-							http://pages.cpsc.ucalgary.ca/~laringha/501/Wavefiles/main.c
+Code used from:	http://pages.cpsc.ucalgary.ca/~laringha/501/Wavefiles/readwrite/main.c
+http://pages.cpsc.ucalgary.ca/~laringha/501/Wavefiles/main.c
 */
 
 #pragma region Macros
@@ -254,7 +254,7 @@ int saveWave(char* filename)
 		short val;
 		for (int i = 0; i < sampleCount; i++)
 		{
-			val = (short)(OUTdata[i] * (pow(2, 15) - 1) );
+			val = (short)(OUTdata[i] * (pow(2, 15) - 1));
 			fwrite((char*)&val, 1, 2, out);
 		}
 
@@ -329,7 +329,7 @@ int main(int argc, char* argv[])
 		filename = argv[1];
 		IRName = argv[2];
 		outFilename = argv[3];
-	
+
 		//TODO: delete this
 		printf("input file: %s, IR file: %s, output file: %s\n", filename, IRName, outFilename);
 
@@ -356,215 +356,13 @@ int main(int argc, char* argv[])
 
 	//creating output
 	OUTSize = WAVsubChunk2Size + IRsubChunk2Size - 1;
-	
+
 	//convolve
 	convolve(WAVdata, WAVsubChunk2Size, IRdata, IRsubChunk2Size, OUTdata, OUTSize);
-	
+
 	//write output to file
 	saveWave(outFilename);
 
 	getchar();		//keeps terminal open (visual studio) 
 
 }
-
-
-
-/* OLD CODE:
-
-#pragma region Imports
-
-#include<stdio.h>
-#include<stdlib.h>
-#include<malloc.h>
-
-#pragma endregion
-
-
-
-#pragma region Attributes
-
-// IO
-char* usageStr = "Usage: convolve <input file> <IRfile> <output file> ";
-char* inputFile;
-char* IRFile;
-char* outputFile;
-
-//WAV file attributes (from "Audio File Formats" handout)
-char chunkID[4];
-int chunkSize;
-char format[4];
-char subchunk1ID[4];
-int subchunk1Size;
-short int audioFormat;
-short int numChannels;
-int sampleRate;
-int byteRate;
-short int blockAlign;
-short int bitsPerSample;
-char subchunk2ID[4];
-int subchunk2Size;		//note: this is the size of data in BYTES
-char* data;
-short int size;			//this is the size of data in 2-BYTES
-
-#pragma endregion
-
-
-
-
-
-//reads .WAV file input
-float* readWAVFile(char* input){
-
-//open and read file
-
-FILE* fileptr;
-char* buffer;
-long len;
-
-fileptr = fopen(input, "rb");
-fseek(fileptr, 0, SEEK_END);
-//length of input file in bytes
-len = ftell(fileptr);
-rewind(fileptr);
-
-//malloc enough for file + \0
-buffer = (char *)malloc((len + 1)*sizeof(char));	//TODO: might not need the +1 since we're not actually dealing with a "string"
-//read entire file, byte-by-byte
-fread(buffer, len, 1, fileptr);
-fclose(fileptr);
-
-//current location in buffer
-int current = 0;
-
-//get chunk ID
-memcpy(chunkID, buffer + current, 4);
-current += 4;
-
-//get chunk size
-memcpy(chunkSize, buffer + current, 4);
-current += 4;
-
-//get format
-memcpy(format, buffer + current, 4);
-current += 4;
-
-//get subChunk1ID
-memcpy(subchunk1ID, buffer + current, 4);
-current += 4;
-
-//get subChunk1Size
-memcpy(subchunk1Size, buffer + current, 4);
-current += 4;
-
-//get audioFormat
-memcpy(audioFormat, buffer + current, 2);
-current += 2;
-
-//get numChannels
-memcpy(numChannels, buffer + current, 2);
-current += 2;
-
-//get sampleRate
-memcpy(sampleRate, buffer + current, 4);
-current += 4;
-
-//get byteRate
-memcpy(byteRate, buffer + current, 4);
-current += 4;
-
-//get blockAlign
-memcpy(blockAlign, buffer + current, 2);
-current += 2;
-
-//get bitsPerSample
-memcpy(bitsPerSample, buffer + current, 2);
-current += 2;
-
-//if subchunk1Size is 18 rather than 16, we have 2 bytes of junk
-if (subchunk1Size == 18)
-{
-current += 2;
-}
-
-//get subchunk2ID
-memcpy(subchunk2ID, buffer + current, 4);
-current += 4;
-
-//get subchunk2Size
-memcpy(subchunk2Size, buffer + current, 4);
-current += 4;
-
-//get data
-memcpy(data, buffer + current, subchunk2Size);
-current += subchunk2Size;
-
-//read data to create a return data array
-size = subchunk2Size / 2;
-float* returnData;
-short temp = 0;
-
-for (int i = 0; i < size; i++){
-temp = data[i];
-returnData[i] = temp / (pow(2,15) - 1);
-//equalize anything under -1.0
-if (returnData[i] < -1.0)
-returnData[i] = -1.0;
-}
-
-return returnData;
-}
-
-
-
-
-
-//writes a .WAV file after processing
-void writeWAVFile(char* output){
-
-
-}
-
-
-//performs time-based convolution on two float arrays (Smith p. 112 - 115)
-float* timeConvolution(float* input){
-
-}
-
-
-
-int main(int argc, char *argv[]){
-
-//check arguments
-if (argc != REQ_ARGS){
-printf(usageStr);
-return 0;
-}
-
-//set args
-inputFile = argv[1];
-IRFile = argv[2];
-outputFile = argv[3];
-
-//TODO: delete
-printf("input file: %s, IR file: %s, output file: %s\n", inputFile, IRFile, outputFile);
-
-
-//read .wav files
-float* inputWAV;
-inputWAV = readWAVFile(inputFile);
-
-
-//perform time-based convolution
-
-
-
-//write data to output .WAV file
-
-
-
-
-
-getchar();		//keeps terminal open (visual studio)
-}
-
-*/
