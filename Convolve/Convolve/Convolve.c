@@ -27,7 +27,7 @@ Sources:	Main WAV file: http://soundbible.com/989-10-Second-Applause.html
 #define JUNK 0x4b4e554a
 
 #define PI 3.14159265358979
-#define TWO_PI (2.0*PI)
+#define TWO_PI (PI * 2)
 
 #pragma endregion
 
@@ -49,10 +49,23 @@ char* inputFile;
 char* IRFile;
 char* outputFile;
 
-//WAV file attributes
-
-
-#pragma endregion 
+//WAV file attributes (from "Audio File Formats" handout)
+char chunkID[4];
+int chunkSize;
+char format[4];
+char subchunk1ID[4];
+int subchunk1Size;
+short int audioFormat;
+short int numChannels;
+int sampleRate;
+int byteRate;
+short int blockAlign;
+short int bitsPerSample;
+char subchunk2ID[4];
+int subchunk2Size;		//note: this is the size of data in BYTES
+char* data;
+short int size;			//this is the size of data in 2-BYTES
+#pragma endregion		
 
 
 
@@ -62,18 +75,19 @@ char* outputFile;
 float* readWAVFile(char* input){
 
 	//open and read file
+
 	FILE* fileptr;
 	char* buffer;
 	long len;
 
 	fileptr = fopen(input, "rb");
 	fseek(fileptr, 0, SEEK_END);
-	//get length of input file in bytes
+	//length of input file in bytes
 	len = ftell(fileptr);
 	rewind(fileptr);
 
 	//malloc enough for file + \0
-	buffer = (char *)malloc((len + 1)*sizeof(char)); 
+	buffer = (char *)malloc((len + 1)*sizeof(char));	//TODO: might not need the +1 since we're not actually dealing with a "string" 
 	//read entire file, byte-by-byte
 	fread(buffer, len, 1, fileptr); 
 	fclose(fileptr);
@@ -82,16 +96,81 @@ float* readWAVFile(char* input){
 	int current = 0;
 
 	//get chunk ID
-	char chunkID[4];
+	memcpy(chunkID, buffer + current, 4);
+	current += 4;
 	
+	//get chunk size
+	memcpy(chunkSize, buffer + current, 4);
+	current += 4;
+
+	//get format
+	memcpy(format, buffer + current, 4);
+	current += 4;
+
+	//get subChunk1ID
+	memcpy(subchunk1ID, buffer + current, 4);
+	current += 4;
+
+	//get subChunk1Size
+	memcpy(subchunk1Size, buffer + current, 4);
+	current += 4;
+
+	//get audioFormat
+	memcpy(audioFormat, buffer + current, 2);
+	current += 2;
+
+	//get numChannels
+	memcpy(numChannels, buffer + current, 2);
+	current += 2;
+
+	//get sampleRate
+	memcpy(sampleRate, buffer + current, 4);
+	current += 4;
+
+	//get byteRate
+	memcpy(byteRate, buffer + current, 4);
+	current += 4;
+
+	//get blockAlign
+	memcpy(blockAlign, buffer + current, 2);
+	current += 2;
+
+	//get bitsPerSample
+	memcpy(bitsPerSample, buffer + current, 2);
+	current += 2;
+
+	//if subchunk1Size is 18 rather than 16, we have 2 bytes of junk
+	if (subchunk1Size == 18)
+	{
+		current += 2;
+	}
+
+	//get subchunk2ID
+	memcpy(subchunk2ID, buffer + current, 4);
+	current += 4;
+
+	//get subchunk2Size
+	memcpy(subchunk2Size, buffer + current, 4);
+	current += 4;
+
+	//get data
+	memcpy(data, buffer + current, subchunk2Size);
+	current += subchunk2Size;
 	
-	
-	
-	
-	
-	
-	float retVal[10];	//just for test
-	return retVal;
+	//read data to create a return data array
+	size = subchunk2Size / 2;
+	float* returnData;
+	short temp = 0;
+
+	for (int i = 0; i < size; i++){
+		temp = data[i];
+		returnData[i] = temp / (pow(2,15) - 1);
+		//equalize anything under -1.0
+		if (returnData[i] < -1.0)
+			returnData[i] = -1.0;
+	}
+
+	return returnData;
 }
 
 
@@ -137,6 +216,10 @@ int main(int argc, char *argv[]){
 
 	
 	//write data to output .WAV file
+
+
+
+
 
 	getchar();		//keeps terminal open (visual studio) 
 }
